@@ -27,7 +27,7 @@ int main()
     string gender[2] = { "male","female"};
     int pickGender = 0;
      //DropTable();
-       createTable();
+      createTable();
     while (checkPhone(phone))
     {
         cout << "Enter phone number" << endl;
@@ -149,8 +149,10 @@ void createTable()
     /*start work with database name:--- */
     con->setSchema(nameData);
     stmt = con->createStatement();
-    stmt->execute("CREATE TABLE services ( phone VARCHAR(20) PRIMARY KEY,pedicure BOOLEAN DEFAULT FALSE,manicure BOOLEAN DEFAULT FALSE,Nail_Building BOOLEAN DEFAULT FALSE,Eyebrow_Shaping BOOLEAN DEFAULT FALSE, Mustache_wax BOOLEAN DEFAULT FALSE,leg_Max BOOLEAN DEFAULT FALSE,hand_Wax BOOLEAN DEFAULT FALSE, wax_On_The_Back BOOLEAN DEFAULT FALSE,wax_In_The_Crevices BOOLEAN DEFAULT FALSE ,time_To_Do VARCHAR(50));");
-   // stmt->execute("CREATE TABLE customer (phone VARCHAR(50) PRIMARY KEY,name VARCHAR(50),gender VARCHAR(10), creationDate VARCHAR(50));");
+    //stmt->execute("CREATE TABLE servicesPriceForFemale ( service VARCHAR(50),servicePrice NUMBER);");
+    //stmt->execute("CREATE TABLE servicesPriceForMale ( service VARCHAR(50),servicePrice NUMBER);");
+     //stmt->execute("CREATE TABLE services ( phone VARCHAR(20),Pedicure BOOLEAN DEFAULT FALSE,Manicure BOOLEAN DEFAULT FALSE,Nail_Building BOOLEAN DEFAULT FALSE,Eyebrow_Shaping BOOLEAN DEFAULT FALSE, Mustache_Wax BOOLEAN DEFAULT FALSE,Leg_Max BOOLEAN DEFAULT FALSE,Hand_Wax BOOLEAN DEFAULT FALSE, Back_Wax BOOLEAN DEFAULT FALSE,Crevices_Wax BOOLEAN DEFAULT FALSE ,time_To_Do VARCHAR(50));");
+    //stmt->execute("CREATE TABLE customer (phone VARCHAR(50) PRIMARY KEY,name VARCHAR(50),gender VARCHAR(10), creationDate VARCHAR(50));");
     /*Printing*/
     cout << "Finished creating table" << endl;
     delete stmt;
@@ -160,7 +162,67 @@ void createTable()
 }
 
 
+            /* insert price of s*/
+void InsertData()
+{
+    string s, u, p;
+    bool flag;
+    flag = localDataForLogin(s, u, p);
+    if (flag == false)
+        exit(0);
+    /*connect to the database*/
+//for demonstration only. never save your password in the code!
+    const string server = s;
+    const string username = u;
+    const string password = p;
 
+
+
+    sql::Driver* driver;
+    sql::Connection* con;
+    sql::PreparedStatement* pstmt;
+
+    try
+    {
+        driver = get_driver_instance();
+        con = driver->connect(server, username, password);
+    }
+    catch (sql::SQLException e)
+    {
+        cout << "Could not connect to server. Error message: " << e.what() << endl;
+        system("pause");
+        exit(1);
+    }
+    /*INSERT DATA TO*/
+    //pstmt = con->prepareStatement("INSERT INTO servicesPriceForFemale(service,servicePrice) VALUES(?,?)");
+    pstmt = con->prepareStatement("INSERT INTO servicesPriceForMale(service,servicePrice) VALUES(?,?)");
+    pstmt->setString(1, "Pedicure");
+    pstmt->setString(2, "100");
+    pstmt->setString(1, "Manicure");
+    pstmt->setString(2, "80");
+    pstmt->setString(1, "Nail_Building");
+    pstmt->setString(2, "150");
+    pstmt->setString(1, "Eyebrow_Shaping");
+    pstmt->setString(2, "40");
+    pstmt->setString(1, "Mustache_Wax");
+    pstmt->setString(2, "100");
+    pstmt->setString(1, "Leg_Wax");
+    pstmt->setString(2, "100");
+    pstmt->setString(1, "Hand_Wax");
+    pstmt->setString(2, "100");
+    pstmt->setString(1, "Back_Wax");
+    pstmt->setString(2, "100");
+    pstmt->setString(1, "Cervices_Wax");
+    pstmt->setString(2, "100");
+
+
+    pstmt->execute();
+    cout << "One row inserted." << endl;
+    delete pstmt;
+    system("pause");
+}
+
+    
 bool localDataForLogin(string& server, string& username, string& password) {
     string nameFile = "D:\\CPP\\connInfo.txt";
     ifstream inFile(nameFile);
