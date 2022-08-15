@@ -29,6 +29,8 @@ int main()
 
     string phone;
     string name;
+    string genderDB;
+    int totalPrice = 0;
     string gender[2] = { "male","female"};
     int pickGender = 0;
     char  services_c[I_SIZE][J_SIZE] = {"Pedicure","Menicure","Nail_Building","Eyebrow_Shaping","Mustache_Wax","Leg_Wax","Hand_Wax","Back_Wax","Crevices_Wax"};
@@ -155,6 +157,7 @@ int main()
         sql::Driver* driver;
         sql::Connection* con;
         sql::PreparedStatement* pstmt;
+        sql::ResultSet* result;
 
         try
         {
@@ -175,16 +178,49 @@ int main()
         {
             if (b[i] == 1)
             {
+                pstmt->setBoolean(i + 1, true);
+            }
+        }
+        pstmt->execute();
+
+        for (int i = 0; i < SIZEARR; i++)
+        {
+            if (b[i] == 1)
+            {
                 /*select gender from customer ,where phone=?  -->phone */
+                pstmt = con->prepareStatement("SELECT gender FROM customer where phone=?;");
+                //pstmt->setString(1, phone);   //????
+                result = pstmt->executeQuery();
+                genderDB = result->getString(1).c_str();
+
                 /*if female else male*/
-                /*select servicePrice from serviceprice---  where servie=services_c[i]"*/
+                if (genderDB == gender[0])
+                {
+                    /*select servicePrice from servicepricemale  where servie=services_c[i]"*/
+                    pstmt = con->prepareStatement("SELECT servicePrice FROM servicepricemale where servie=?;");
+                    //pstmt->setString(i+1, services_c[i]);   //???? indata onrun
+                    result = pstmt->executeQuery();
+                    totalPrice += result->getInt(1);
+                    
+                }
+                else
+                {
+                    /*select servicePrice from servicepricefemale  where servie=services_c[i]"*/
+                    pstmt = con->prepareStatement("SELECT servicePrice FROM servicepricefemale where servie=?;");
+                    //pstmt->setString(i+1, services_c[i]);   //????
+                    result = pstmt->executeQuery();
+                    totalPrice += result->getInt(1);
+                }
+
 
 
 
                 pstmt->setBoolean(i + 1, true);
             }
         }
-        pstmt->execute();
+
+
+        delete result;
         delete pstmt;
         delete con;
         system("pause");
